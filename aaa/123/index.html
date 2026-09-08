@@ -14,7 +14,6 @@
         }
         h2 { margin-bottom: 30px; color: #ffaa00; }
         
-        /* 输入框样式 */
         input {
             width: 300px;
             padding: 15px;
@@ -26,7 +25,6 @@
             background-color: rgba(255, 255, 255, 0.9);
         }
 
-        
         #result {
             display: none; 
             margin-top: 30px;
@@ -39,7 +37,6 @@
             animation: fadeIn 1s; 
         }
 
-        
         @keyframes fadeIn {
             from { opacity: 0; transform: scale(0.8); }
             to { opacity: 1; transform: scale(1); }
@@ -50,25 +47,18 @@
 
     <h2>✦ 命运占卜仪式 ✦</h2>
     
-    
-    <input type="text" id="destinyInput" placeholder="输入心中所想并回车即可命定之人">
-    
+    <input type="text" id="destinyInput" placeholder="输入心中所想即可命定之人">
     
     <div id="result">
-        < img src="https://github.com/kebaozuikeai/kebaozuikeai.github.io/blob/main/mingd.jpg" alt="命定之人">
+        <!-- 注意看这里！你只要把引号里的网址换成你在浏览器里验证过得能打开图片的网址就行！ -->
+        < img src="https://kebaozuikeai.github.io/aaa/123/mingd.jpg" alt="命定之人">
     </div>
 
     <script>
-    
         const input = document.getElementById('destinyInput');
-
-        // 监听键盘按键事件
         input.addEventListener('keydown', function(event) {
-            // 如果按下的键是“Enter”回车键
             if (event.key === 'Enter') {
-                // 把图片区域显示出来
                 document.getElementById('result').style.display = 'block';
-                // 让输入框变淡或者隐藏，更有仪式感
                 input.style.opacity = '0.3';
                 input.value = "啊啊啊啊你居然喜欢胖子";
             }
