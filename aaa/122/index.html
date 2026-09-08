@@ -7,43 +7,27 @@
     <style>
         body { background-color: #2d2d44; color: white; text-align: center; margin-top: 20%; font-family: "微软雅黑"; }
         h1 { color: #ffaa00; }
-        
-        #btn {
-            position: fixed; /* 固定定位，方便它逃跑 */
-            width: 150px;    /* 控制奶龙的大小，觉得大了就改小，觉得小了就改大 */
-            cursor: pointer; /* 鼠标放上去会变成小爪子 */
-            border-radius: 20px;
-        }
+        #btn { position: fixed; width: 150px; cursor: pointer; border-radius: 20px; }
     </style>
 </head>
 <body>
     <h1>你能抓到这只点点吗？</h1>
-    
-    <!-- 把 src 后面的链接换成你奶龙图片的完整链接！ -->
-    <img src="https://kebaozuikeai.github.io/gou.jpg">
-
+    <img id="btn" src="https://kebaozuikeai.github.io/aaa/122/gou.jpg" alt="点点">
     <script>
         const btn = document.getElementById('btn');
         let count = 0;
-
         function runAway() {
             count++;
             if (count >= 3) {
-                // 第三次直接弹窗嘲笑他！
-                alert("点点要去吃饭了");
-                btn.style.display = 'none'; // 奶龙彻底消失
+                alert("点点要去吃饭了！");
+                btn.style.display = 'none';
                 return;
             }
-            // 随机计算屏幕上的位置（减去图片宽高的粗略估算）
             let x = Math.random() * (window.innerWidth - 200);
             let y = Math.random() * (window.innerHeight - 200);
-            
-            // 给奶龙设置新的位置
             btn.style.left = x + "px";
             btn.style.top = y + "px";
         }
-
-        // 奶龙感觉到鼠标碰到或者被点击，就会立马逃跑
         btn.addEventListener('mouseover', runAway);
         btn.addEventListener('click', runAway);
     </script>
