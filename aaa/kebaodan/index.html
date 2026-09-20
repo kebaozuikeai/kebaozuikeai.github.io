@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>蛋蛋捏捏乐</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            /* 暖黄偏白的柔和背景 */
+            background: linear-gradient(135deg, #fffdf5, #fef4d8);
+            user-select: none;
+            -webkit-user-select: none;
+            overflow: hidden;
+            font-family: "微软雅黑", sans-serif;
+        }
+
+        #game-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 对话气泡 */
+        #bubble {
+            background-color: #fff;
+            border: 3px solid #d4a373;
+            border-radius: 20px;
+            padding: 15px 25px;
+            position: absolute;
+            top: -110px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            font-size: 17px;
+            font-weight: bold;
+            color: #5c4033;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            transform: translateY(15px);
+            text-align: center;
+            white-space: nowrap;
+            z-index: 10;
+        }
+        
+        #bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            margin-left: -10px;
+            border-width: 10px;
+            border-style: solid;
+            border-color: #d4a373 transparent transparent transparent;
+        }
+        
+        #bubble::before {
+            content: '';
+            position: absolute;
+            bottom: -9px;
+            left: 50%;
+            margin-left: -7px;
+            border-width: 7px;
+            border-style: solid;
+            border-color: #fff transparent transparent transparent;
+            z-index: 2;
+        }
+
+        #bubble.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 捏捏乐主体 */
+        #egg {
+            width: 200px;
+            height: 250px;
+            cursor: pointer;
+            transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            -webkit-tap-highlight-color: transparent;
+            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.1));
+        }
+
+        /* 长按戳下去的效果：压扁、拉宽 */
+        #egg:active, #egg.squished {
+            transform: scale(1.15, 0.75);
+        }
+
+        .hint {
+            margin-top: 40px;
+            color: #b08968;
+            font-size: 16px;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+            background: rgba(255,255,255,0.8);
+            padding: 8px 16px;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.7; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <div id="bubble"></div>
+        
+        <!-- 胖乎乎的SVG鸡蛋 -->
+        <svg id="egg" viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- 蛋壳的立体渐变色 -->
+                <radialGradient id="eggGrad" cx="35%" cy="30%" r="70%">
+                    <stop offset="0%" stop-color="#ffffff" />
+                    <stop offset="70%" stop-color="#fff8e7" />
+                    <stop offset="100%" stop-color="#f0e6d2" />
+                </radialGradient>
+            </defs>
+
+            <!-- 蛋的身体（上窄下宽） -->
+            <path d="M 100 20 C 140 20, 180 100, 180 170 C 180 220, 140 240, 100 240 C 60 240, 20 220, 20 170 C 20 100, 60 20, 100 20 Z" fill="url(#eggGrad)" stroke="#e0d4b8" stroke-width="3"/>
+            
+            <!-- 蛋的小短手（显得可怜又可爱） -->
+            <path d="M 25 160 Q 10 170 15 185" stroke="#e0d4b8" stroke-width="6" fill="none" stroke-linecap="round"/>
+            <path d="M 175 160 Q 190 170 185 185" stroke="#e0d4b8" stroke-width="6" fill="none" stroke-linecap="round"/>
+
+            <!-- 眼睛 -->
+            <ellipse cx="70" cy="130" rx="8" ry="12" fill="#2c3e50" />
+            <ellipse cx="130" cy="130" rx="8" ry="12" fill="#2c3e50" />
+            
+            <!-- 瞳孔高光 -->
+            <circle cx="68" cy="126" r="3" fill="#ffffff" />
+            <circle cx="128" cy="126" r="3" fill="#ffffff" />
+
+            <!-- 小腮红（尴尬的红晕） -->
+            <ellipse cx="50" cy="150" rx="12" ry="6" fill="#ff8a80" opacity="0.5" />
+            <ellipse cx="150" cy="150" rx="12" ry="6" fill="#ff8a80" opacity="0.5" />
+            
+            <!-- 蛋的嘴巴（小波浪，显得很无奈/蛋定） -->
+            <path d="M 85 155 Q 90 160 95 155 Q 100 160 105 155 Q 110 160 115 155" stroke="#2c3e50" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+            
+            <!-- 额头的一滴冷汗（完美体现蛋的心累） -->
+            <path d="M 150 90 Q 155 100 150 105 Q 145 100 150 90 Z" fill="#81d4fa" opacity="0.8" />
+        </svg>
+    </div>
+
+    <div class="hint">长按戳一下，蛋蛋会碎掉吗？</div>
+
+    <script>
+        const egg = document.getElementById('egg');
+        const bubble = document.getElementById('bubble');
+        
+        // 蛋蛋专属台词库（绝对不呱）
+        const texts = [
+            "干嘛戳我！蛋壳要碎了！ (｡•́︿•̀｡)",
+            "哼唧~ 保持蛋定！ (˶ᵔ ᵕ ᵔ˶)",
+            "你再捏，我就要变成煎蛋了！ (๑•́ ₃ •̀๑)",
+            "别碰我的蛋黄！ (╯°□°）╯",
+            "呜呜呜，我只是一颗可怜的蛋 (இ﹏இ`｡)",
+            "今天也要加油背单词哦！(ง •̀_•́)ง",
+            "再捏我就滚蛋了！ (｀へ´*)",
+            "蛋蛋的忧伤... (¯﹃¯)"
+        ];
+
+        let audioCtx = null;
+        let bubbleTimeout = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        // 清脆的“叽叽”音效
+        function playSqueak() {
+            initAudio();
+            if (!audioCtx) return;
+
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            osc.type = 'sine'; 
+            const now = audioCtx.currentTime;
+            // 频率从高到低再到高，模拟按压的弹性
+            osc.frequency.setValueAtTime(600, now);
+            osc.frequency.exponentialRampToValueAtTime(1200, now + 0.08);
+            osc.frequency.exponentialRampToValueAtTime(800, now + 0.15);
+
+            gainNode.gain.setValueAtTime(0.3, now);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            osc.start(now);
+            osc.stop(now + 0.2);
+        }
+
+        function showBubble() {
+            const randomText = texts[Math.floor(Math.random() * texts.length)];
+            bubble.innerText = randomText;
+            
+            bubble.classList.remove('show');
+            void bubble.offsetWidth; 
+            bubble.classList.add('show');
+            
+            if (bubbleTimeout) clearTimeout(bubbleTimeout);
+            bubbleTimeout = setTimeout(() => {
+                bubble.classList.remove('show');
+            }, 1500);
+        }
+
+        function startSquish(e) {
+            e.preventDefault(); 
+            egg.classList.add('squished');
+            playSqueak();
+            showBubble();
+            if (navigator.vibrate) navigator.vibrate(30);
+        }
+
+        function endSquish() {
+            egg.classList.remove('squished');
+        }
+
+        egg.addEventListener('mousedown', startSquish);
+        document.addEventListener('mouseup', endSquish);
+
+        egg.addEventListener('touchstart', startSquish, { passive: false });
+        document.addEventListener('touchend', endSquish);
+        document.addEventListener('touchcancel', endSquish);
+    </script>
+
+</body>
+</html>
