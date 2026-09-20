@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>绿色青蛙捏捏乐</title>
+    <title>软萌小绿捏捏乐</title>
     <style>
         body {
             margin: 0;
@@ -13,37 +13,35 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background-color: #f0f8ff;
+            background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
             user-select: none;
             -webkit-user-select: none;
             overflow: hidden;
+            font-family: "微软雅黑", sans-serif;
         }
 
-        /* 游戏区容器 */
         #game-container {
             position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-top: 50px;
         }
 
         /* 对话气泡 */
         #bubble {
             background-color: #fff;
-            border: 3px solid #333;
+            border: 3px solid #2e7d32;
             border-radius: 20px;
             padding: 15px 25px;
             position: absolute;
-            top: -100px;
-            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
-            font-family: "微软雅黑", sans-serif;
+            top: -110px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
             font-size: 18px;
             font-weight: bold;
             color: #333;
             opacity: 0;
             transition: opacity 0.3s, transform 0.3s;
-            transform: translateY(10px);
+            transform: translateY(15px);
             text-align: center;
             white-space: nowrap;
             z-index: 10;
@@ -57,13 +55,13 @@
             margin-left: -10px;
             border-width: 10px;
             border-style: solid;
-            border-color: #333 transparent transparent transparent;
+            border-color: #2e7d32 transparent transparent transparent;
         }
         
         #bubble::before {
             content: '';
             position: absolute;
-            bottom: -10px;
+            bottom: -9px;
             left: 50%;
             margin-left: -7px;
             border-width: 7px;
@@ -77,121 +75,84 @@
             transform: translateY(0);
         }
 
-        /* 青蛙本体 */
+        /* 捏捏乐主体（用SVG绘制可爱青蛙） */
         #frog {
-            width: 160px;
-            height: 160px;
-            background: radial-gradient(circle at 30% 30%, #a8e6cf, #4caf50);
-            border-radius: 50% 50% 45% 45%;
-            position: relative;
+            width: 220px;
+            height: 220px;
             cursor: pointer;
             transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 15px 25px rgba(0,0,0,0.15), inset 0 -10px 20px rgba(0,0,0,0.1);
             -webkit-tap-highlight-color: transparent;
-            z-index: 1;
+            filter: drop-shadow(0 15px 20px rgba(0,0,0,0.15));
         }
 
-        /* 长按戳下去的效果 */
+        /* 按下去的效果（压扁、拉宽） */
         #frog:active, #frog.squished {
-            transform: scale(1.1, 0.8);
-            box-shadow: 0 5px 10px rgba(0,0,0,0.2), inset 0 -5px 10px rgba(0,0,0,0.2);
+            transform: scale(1.15, 0.75);
         }
 
-        /* 眼睛 */
-        .eye {
-            width: 45px;
-            height: 45px;
-            background-color: #fff;
-            border-radius: 50%;
-            position: absolute;
-            top: 25px;
-            border: 3px solid #4caf50;
-            box-shadow: inset 0 -3px 5px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .eye.left { left: 20px; }
-        .eye.right { right: 20px; }
-
-        /* 瞳孔 */
-        .pupil {
-            width: 20px;
-            height: 20px;
-            background-color: #222;
-            border-radius: 50%;
-            position: relative;
-            transition: transform 0.2s;
-        }
-
-        /* 高光 */
-        .pupil::after {
-            content: '';
-            width: 6px;
-            height: 6px;
-            background-color: #fff;
-            border-radius: 50%;
-            position: absolute;
-            top: 3px;
-            left: 3px;
-        }
-
-        /* 嘴巴 */
-        .mouth {
-            width: 40px;
-            height: 20px;
-            border-bottom: 5px solid #2e7d32;
-            border-radius: 0 0 40px 40px;
-            position: absolute;
-            bottom: 35px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        /* 腮红 */
-        .blush {
-            width: 20px;
-            height: 10px;
-            background-color: #ff8a80;
-            border-radius: 50%;
-            position: absolute;
-            top: 85px;
-            opacity: 0.7;
-        }
-        .blush.left { left: 15px; }
-        .blush.right { right: 15px; }
-
-        /* 提示文字 */
         .hint {
-            margin-top: 40px;
-            font-family: "微软雅黑", sans-serif;
-            color: #888;
+            margin-top: 50px;
+            color: #00796b;
             font-size: 16px;
+            font-weight: bold;
             animation: pulse 2s infinite;
+            background: rgba(255,255,255,0.6);
+            padding: 8px 16px;
+            border-radius: 20px;
         }
 
         @keyframes pulse {
-            0% { opacity: 0.6; }
-            50% { opacity: 1; }
-            100% { opacity: 0.6; }
+            0% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.7; }
         }
     </style>
 </head>
 <body>
 
     <div id="game-container">
-        <!-- 对话气泡 -->
         <div id="bubble"></div>
         
-        <!-- 青蛙本体 -->
-        <div id="frog">
-            <div class="eye left"><div class="pupil"></div></div>
-            <div class="eye right"><div class="pupil"></div></div>
-            <div class="blush left"></div>
-            <div class="blush right"></div>
-            <div class="mouth"></div>
-        </div>
+        <!-- 胖乎乎的SVG青蛙 -->
+        <svg id="frog" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- 身体渐变色，让它更立体 -->
+                <radialGradient id="bodyGrad" cx="30%" cy="30%" r="70%">
+                    <stop offset="0%" stop-color="#a5d6a7" />
+                    <stop offset="100%" stop-color="#4caf50" />
+                </radialGradient>
+                <radialGradient id="eyeGrad" cx="40%" cy="40%" r="60%">
+                    <stop offset="0%" stop-color="#81c784" />
+                    <stop offset="100%" stop-color="#388e3c" />
+                </radialGradient>
+            </defs>
+
+            <!-- 身体 -->
+            <ellipse cx="100" cy="120" rx="75" ry="65" fill="url(#bodyGrad)" />
+            
+            <!-- 眼睛底座 -->
+            <circle cx="55" cy="60" r="32" fill="url(#eyeGrad)" />
+            <circle cx="145" cy="60" r="32" fill="url(#eyeGrad)" />
+            
+            <!-- 眼白 -->
+            <circle cx="55" cy="60" r="22" fill="#ffffff" />
+            <circle cx="145" cy="60" r="22" fill="#ffffff" />
+            
+            <!-- 瞳孔 -->
+            <circle cx="55" cy="65" r="10" fill="#2c3e50" />
+            <circle cx="145" cy="65" r="10" fill="#2c3e50" />
+            
+            <!-- 瞳孔高光（灵魂） -->
+            <circle cx="51" cy="61" r="4" fill="#ffffff" />
+            <circle cx="141" cy="61" r="4" fill="#ffffff" />
+            
+            <!-- 小腮红 -->
+            <ellipse cx="35" cy="115" rx="12" ry="8" fill="#ff8a80" opacity="0.6" />
+            <ellipse cx="165" cy="115" rx="12" ry="8" fill="#ff8a80" opacity="0.6" />
+            
+            <!-- 可爱的小嘴巴 (W型) -->
+            <path d="M 80 125 Q 90 140 100 125 Q 110 140 120 125" stroke="#2e7d32" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
     </div>
 
     <div class="hint">长按戳下去，松开弹回来~</div>
@@ -200,7 +161,6 @@
         const frog = document.getElementById('frog');
         const bubble = document.getElementById('bubble');
         
-        // 可爱的文案和颜文字库
         const texts = [
             "干嘛戳我呀！ (｡•́︿•̀｡)",
             "哼唧~ 不要捏啦！ (˶ᵔ ᵕ ᵔ˶)",
@@ -215,7 +175,6 @@
         let audioCtx = null;
         let bubbleTimeout = null;
 
-        // 初始化音频环境 (需要用户交互才能触发)
         function initAudio() {
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -225,7 +184,6 @@
             }
         }
 
-        // 合成“哼唧”音效
         function playSqueak() {
             initAudio();
             if (!audioCtx) return;
@@ -233,15 +191,12 @@
             const osc = audioCtx.createOscillator();
             const gainNode = audioCtx.createGain();
 
-            osc.type = 'sine'; // 正弦波，声音比较像卡通玩具
-
-            // 频率快速变化，模拟“叽”的一声
+            osc.type = 'sine'; 
             const now = audioCtx.currentTime;
-            osc.frequency.setValueAtTime(400, now);
-            osc.frequency.exponentialRampToValueAtTime(1000, now + 0.1);
-            osc.frequency.exponentialRampToValueAtTime(600, now + 0.2);
+            osc.frequency.setValueAtTime(450, now);
+            osc.frequency.exponentialRampToValueAtTime(1100, now + 0.1);
+            osc.frequency.exponentialRampToValueAtTime(700, now + 0.2);
 
-            // 音量包络：快速起音，迅速衰减
             gainNode.gain.setValueAtTime(0.3, now);
             gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
 
@@ -252,44 +207,35 @@
             osc.stop(now + 0.25);
         }
 
-        // 显示气泡
         function showBubble() {
             const randomText = texts[Math.floor(Math.random() * texts.length)];
             bubble.innerText = randomText;
             
-            // 重置气泡动画
             bubble.classList.remove('show');
-            void bubble.offsetWidth; // 触发重绘
+            void bubble.offsetWidth; 
             bubble.classList.add('show');
             
-            // 1.5秒后隐藏
             if (bubbleTimeout) clearTimeout(bubbleTimeout);
             bubbleTimeout = setTimeout(() => {
                 bubble.classList.remove('show');
             }, 1500);
         }
 
-        // 按下时触发
         function startSquish(e) {
-            e.preventDefault(); // 防止手机端长按选中文字
+            e.preventDefault(); 
             frog.classList.add('squished');
             playSqueak();
             showBubble();
-            
-            // 移动端震动反馈 (如果设备支持)
             if (navigator.vibrate) navigator.vibrate(30);
         }
 
-        // 松开时触发
         function endSquish() {
             frog.classList.remove('squished');
         }
 
-        // 绑定鼠标事件
         frog.addEventListener('mousedown', startSquish);
         document.addEventListener('mouseup', endSquish);
 
-        // 绑定触摸事件 (适配手机)
         frog.addEventListener('touchstart', startSquish, { passive: false });
         document.addEventListener('touchend', endSquish);
         document.addEventListener('touchcancel', endSquish);
