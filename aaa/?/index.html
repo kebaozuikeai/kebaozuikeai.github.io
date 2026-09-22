@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>测一测最适合你的家产</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: linear-gradient(135deg, #2b2d42, #1a1b26);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: "微软雅黑", sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            overflow: hidden;
+            color: white;
+        }
+        #app {
+            width: 90vw;
+            max-width: 400px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 25px;
+            padding: 30px 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            position: relative;
+        }
+
+        /* 顶部弹出提示（我知道啦！） */
+        #toast {
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            background: #ff477e;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            opacity: 0;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            z-index: 100;
+            box-shadow: 0 5px 15px rgba(255, 71, 126, 0.4);
+        }
+        #toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* 问题区域 */
+        .question {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+        .question.active {
+            display: block;
+        }
+        .question h2 {
+            font-size: 20px;
+            margin-bottom: 25px;
+            color: #ffd166;
+            line-height: 1.4;
+        }
+        .option-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-sizing: border-box;
+        }
+        .option-btn:active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(0.97);
+        }
+
+        /* 结果区域 */
+        #result {
+            display: none;
+            animation: fadeIn 1s ease-out;
+        }
+        #result.active {
+            display: block;
+        }
+        #result h2 {
+            color: #ffd166;
+            font-size: 22px;
+        }
+        #result .highlight {
+            color: #ff477e;
+            font-size: 36px;
+            font-weight: bold;
+            display: block;
+            margin: 20px 0;
+            text-shadow: 0 0 15px rgba(255,71,126,0.6);
+            animation: pulse 1.5s infinite;
+        }
+        #result .meme-note {
+            font-size: 14px;
+            color: #888;
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 20px;
+            line-height: 1.5;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <div id="toast">我知道啦！ദ്ദി◝ ⩊ ◜.ᐟ</div>
+
+    <!-- 问题一 -->
+    <div class="question active" id="q1">
+        <h2>问题一：你喜欢的家1类型是？</h2>
+        <button class="option-btn" onclick="nextStep(2, true)">A. 傲娇</button>
+        <button class="option-btn" onclick="nextStep(2, true)">B. 绿茶</button>
+        <button class="option-btn" onclick="nextStep(2, true)">C. 自卑</button>
+        <button class="option-btn" onclick="nextStep(2, true)">D. 龙傲天</button>
+    </div>
+
+    <!-- 问题二 -->
+    <div class="question" id="q2">
+        <h2>问题二：你喜欢的家0的类型是？</h2>
+        <button class="option-btn" onclick="nextStep(3, false)">A. 万人迷</button>
+        <button class="option-btn" onclick="nextStep(3, false)">B. 直男</button>
+        <button class="option-btn" onclick="nextStep(3, false)">C. 萌萌小蛋糕</button>
+        <button class="option-btn" onclick="nextStep(3, false)">D. 很像1的0</button>
+    </div>
+
+    <!-- 问题三 -->
+    <div class="question" id="q3">
+        <h2>问题三：谁高一些呢？</h2>
+        <button class="option-btn" onclick="nextStep(4, false)">A. 1</button>
+        <button class="option-btn" onclick="nextStep(4, false)">B. 0</button>
+    </div>
+
+    <!-- 问题四 -->
+    <div class="question" id="q4">
+        <h2>问题四：谁更主动？</h2>
+        <button class="option-btn" onclick="showResult()">A. 1</button>
+        <button class="option-btn" onclick="showResult()">B. 0</button>
+    </div>
+
+    <!-- 结果 -->
+    <div id="result">
+        <h2>已测出你的最美家产</h2>
+        <div class="highlight">你的家产是：许延</div>
+        <div class="meme-note">
+            我根本不知道你选的啥，<br>
+            反正许延牛逼，来给我嗑.<br>
+            ( ˘ ³˘)♥
+        </div>
+    </div>
+</div>
+
+<script>
+    function nextStep(step, showToast) {
+        // 如果要求，显示顶部弹窗
+        if (showToast) {
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 1500);
+        }
+
+        // 隐藏所有问题
+        document.querySelectorAll('.question').forEach(q => q.classList.remove('active'));
+        // 显示下一步
+        const nextQ = document.getElementById('q' + step);
+        if (nextQ) {
+            nextQ.classList.add('active');
+        }
+    }
+
+    function showResult() {
+        // 隐藏所有问题
+        document.querySelectorAll('.question').forEach(q => q.classList.remove('active'));
+        // 显示结果
+        document.getElementById('result').classList.add('active');
+    }
+</script>
+
+</body>
+</html>
