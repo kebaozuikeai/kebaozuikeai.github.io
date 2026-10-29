@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>2P霸王龙劈火车</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #1a1b26; /* 赛博黑夜 */
+            overflow: hidden;
+            font-family: "微软雅黑", sans-serif;
+            touch-action: none;
+            user-select: none;
+        }
+        /* 铁轨背景 */
+        .track {
+            position: absolute;
+            bottom: 50px;
+            width: 100%;
+            height: 10px;
+            background-color: #333;
+            border-top: 2px solid #555;
+            border-bottom: 2px solid #555;
+        }
+        #score-board {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 30px;
+            font-weight: bold;
+            color: #ffaa00;
+            z-index: 10;
+        }
+        /* 霸王龙区域 */
+        #dino-box {
+            position: absolute;
+            left: 50px;
+            bottom: 50px;
+            font-size: 80px;
+            z-index: 5;
+        }
+        /* 永久的2P标志 */
+        #p2-badge {
+            position: absolute;
+            top: -30px;
+            left: 10px;
+            font-size: 24px;
+            font-weight: 900;
+            color: #ffaa00;
+            text-shadow: 2px 2px 0 #000;
+            letter-spacing: 2px;
+            animation: glow 1s infinite alternate;
+        }
+        @keyframes glow {
+            from { text-shadow: 0 0 5px #ffaa00, 2px 2px 0 #000; }
+            to { text-shadow: 0 0 20px #ffaa00, 0 0 30px #ffaa00, 2px 2px 0 #000; }
+        }
+        /* 武器 */
+        #weapon {
+            position: absolute;
+            left: 70px;
+            bottom: 80px;
+            font-size: 60px;
+            transform-origin: bottom left;
+            transform: rotate(-45deg);
+            transition: transform 0.1s;
+            z-index: 4;
+        }
+        /* 攻击状态 */
+        .attacking {
+            transform: rotate(45deg) translate(20px, -20px) !important;
+        }
+        /* 飞过来的火车 */
+        .train {
+            position: absolute;
+            right: -300px;
+            font-size: 70px;
+            transition: right 2s linear;
+            z-index: 3;
+        }
+        /* 爆炸特效 */
+        .boom {
+            position: absolute;
+            font-size: 80px;
+            z-index: 6;
+            animation: pop 0.5s forwards;
+        }
+        @keyframes pop {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+        /* 屏幕震动 */
+        .shake {
+            animation: shake 0.2s;
+        }
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+        #instruction {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            text-align: center;
+            color: #888;
+            font-size: 20px;
+            pointer-events: none;
+            animation: blink 2s infinite;
+        }
+        @keyframes blink { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+    </style>
+</head>
+<body>
+    <div class="track"></div>
+    <div id="score-board">得分: 0 / 30</div>
+    
+    <div id="dino-box">
+        <div id="p2-badge">2P</div>
+        🦖
+    </div>
+    <div id="weapon">🗡️</div>
+
+    <div id="instruction">疯狂点击屏幕 / 按空格劈火车！</div>
+
+    <script>
+        const scoreEl = document.getElementById('score-board');
+        const weapon = document.getElementById('weapon');
+        const dinoBox = document.getElementById('dino-box');
+        const body = document.body;
+        const instruction = document.getElementById('instruction');
+        
+        let score = 0;
+        let totalTrains = 30;
+        let spawnedTrains = 0;
+        let activeTrains = [];
+        let gameOver = false;
+
+        // 生成火车
+        function spawnTrain() {
+            if (spawnedTrains >= totalTrains || gameOver) return;
+
+            const train = document.createElement('div');
+            train.className = 'train';
+            train.innerText = '🚂🚃🚃';
+            
+            // 随机纵向位置（有点高度变化）
+            train.style.bottom = (50 + Math.random() * 150) + 'px';
+            
+            body.appendChild(train);
+            spawnedTrains++;
+
+            // 动画：开始移动
+            setTimeout(() => {
+                train.style.right = '100vw'; // 开到最左边
+            }, 50);
+
+            // 火车到达终点（未被劈中）
+            const fallTimer = setTimeout(() => {
+                if (train.parentNode) {
+                    train.remove();
+                    activeTrains = activeTrains.filter(t => t !== train);
+                    checkWinLose();
+                }
+            }, 2100); // 2s动画 + 0.1s延迟
+
+            // 存入数组以便检测碰撞
+            activeTrains.push({ element: train, timer: fallTimer, x: window.innerWidth });
+        }
+
+        // 劈砍动作
+        function attack() {
+            if (gameOver) return;
+            instruction.style.display = 'none';
+
+            // 武器挥动动画
+            weapon.classList.add('attacking');
+            setTimeout(() => weapon.classList.remove('attacking'), 100);
+
+            // 碰撞检测 (简单粗暴版)
+            let hit = false;
+            activeTrains.forEach(item => {
+                if (!item.element.parentNode) return;
+                
+                const rect = item.element.getBoundingClientRect();
+                // 如果火车到了左边 0 到 300px 的范围内，判定为击中
+                if (rect.left > -100 && rect.left < 300) {
+                    hit = true;
+                    clearTimeout(item.timer);
+                    createBoom(rect.left, rect.top);
+                    item.element.remove();
+                    activeTrains = activeTrains.filter(t => t !== item);
+                    
+                    score++;
+                    scoreEl.innerText = `得分: ${score} / 30`;
+                }
+            });
+
+            if (hit) {
+                body.classList.add('shake');
+                setTimeout(() => body.classList.remove('shake'), 200);
+            }
+        }
+
+        // 爆炸特效
+        function createBoom(x, y) {
+            const boom = document.createElement('div');
+            boom.className = 'boom';
+            boom.innerText = '💥';
+            boom.style.left = x + 'px';
+            boom.style.top = y + 'px';
+            body.appendChild(boom);
+            setTimeout(() => boom.remove(), 500);
+        }
+
+        // 结束判定
+        function checkWinLose() {
+            if (gameOver) return;
+            // 如果所有火车都生成了，且屏幕上的火车都跑光了
+            if (spawnedTrains >= totalTrains && activeTrains.length === 0) {
+                gameOver = true;
+                setTimeout(() => {
+                    if (score < 15) {
+                        alert("霸王龙被火车撵走了。");
+                    } else if (score >= 15 && score < 30) {
+                        alert("以后再来打通这个游戏吧。");
+                    } else if (score === 30) {
+                        alert("你的世界很坚固。");
+                    }
+                }, 300);
+            }
+        }
+
+        // 监听点击事件
+        document.addEventListener('mousedown', attack);
+        document.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // 防止双击放大
+            attack();
+        }, {passive: false});
+
+        // 监听空格键
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                attack();
+            }
+        });
+
+        // 游戏启动：每隔 0.8 秒发一辆车，总共 30 辆
+        const startGame = setInterval(() => {
+            spawnTrain();
+            if (spawnedTrains >= totalTrains) {
+                clearInterval(startGame);
+            }
+        }, 800);
+
+    </script>
+</body>
+</html>
